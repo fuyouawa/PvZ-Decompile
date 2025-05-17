@@ -26,7 +26,7 @@ const int seedPacketHeight = SEED_PACKET_HEIGHT + 8;
 const int zombieRows = 5;
 const char* weirdCharacters[WEIRD_CHARACTERS_COUNT] = 
 {
-	"®"
+	"?"
 };
 
 AlmanacDialog::AlmanacDialog(LawnApp* theApp) : LawnDialog(theApp, DIALOG_ALMANAC, true, _S("Almanac"), _S(""), _S(""), BUTTONS_NONE)

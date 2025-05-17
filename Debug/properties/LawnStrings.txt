@@ -2257,6 +2257,9 @@ GO BACK
 [STORE_BACK_TO_ZEN]
 BACK
 
+[STORE_PURCHASE_HEADER]
+Buy this item?
+
 [SEED_CHOOSER_UPGRADE_WARNING]
 Are you sure you want to use the {UPGRADE_TO} without the {UPGRADE_FROM}?
 
