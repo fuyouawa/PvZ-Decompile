@@ -16,26 +16,28 @@
 #include "../../SexyAppFramework/Font.h"
 #include "../../SexyAppFramework/Slider.h"
 
+// 全局变量:记录已击败的僵尸类型
 int gZombieDefeated[NUM_ZOMBIE_TYPES] = { false };
-const Rect cSeedClipRect = Rect(0, 90, BOARD_WIDTH, 463);
-const int zombieHeight = 80;
-const int zombieOffsetY = 6;
-const Rect cZombieClipRect = Rect(0, zombieHeight + zombieOffsetY, BOARD_WIDTH, 474);
-const int seedPacketRows = 8;
-const int seedPacketHeight = SEED_PACKET_HEIGHT + 8;
-const int zombieRows = 5;
-const char* weirdCharacters[WEIRD_CHARACTERS_COUNT] = 
+
+// 图鉴界面常量定义
+const Rect cSeedClipRect = Rect(0, 90, BOARD_WIDTH, 463);  // 植物列表裁剪区域
+const int zombieHeight = 80;                                // 僵尸图标高度
+const int zombieOffsetY = 6;                                // 僵尸Y轴偏移
+const Rect cZombieClipRect = Rect(0, zombieHeight + zombieOffsetY, BOARD_WIDTH, 474);  // 僵尸列表裁剪区域
+const int seedPacketRows = 8;                              // 植物每行显示数量
+const int seedPacketHeight = SEED_PACKET_HEIGHT + 8;        // 植物图标高度(包含间距)
+const int zombieRows = 5;                                  // 僵尸每行显示数量
+const char* weirdCharacters[WEIRD_CHARACTERS_COUNT] =      // 特殊字符数组
 {
 	"?"
 };
 
 AlmanacDialog::AlmanacDialog(LawnApp* theApp) : LawnDialog(theApp, DIALOG_ALMANAC, true, _S("Almanac"), _S(""), _S(""), BUTTONS_NONE)
 {
-	//mIncrement = 100;
 	mApp = (LawnApp*)gSexyAppBase;
-	mOpenPage = ALMANAC_PAGE_INDEX;
-	mSelectedSeed = SEED_PEASHOOTER;
-	mSelectedZombie = ZOMBIE_NORMAL;
+	mOpenPage = ALMANAC_PAGE_INDEX;           // 初始显示索引页面
+	mSelectedSeed = SEED_PEASHOOTER;          // 默认选中豌豆射手
+	mSelectedZombie = ZOMBIE_NORMAL;          // 默认选中普通僵尸
 	mZombie = nullptr;
 	mPlant = nullptr;
 	mDrawStandardBack = false;
@@ -45,10 +47,17 @@ AlmanacDialog::AlmanacDialog(LawnApp* theApp) : LawnDialog(theApp, DIALOG_ALMANA
 	mDescriptionOverfill = false;
 	mDescriptionSliderDragging = false;
 
+	// 加载图鉴资源
 	TodLoadResources("DelayLoad_Almanac");
-	for (int i = 0; i < LENGTH(mZombiePerfTest); i++) mZombiePerfTest[i] = nullptr;
+	
+	// 初始化僵尸性能测试数组
+	for (int i = 0; i < LENGTH(mZombiePerfTest); i++) 
+		mZombiePerfTest[i] = nullptr;
+	
+	// 设置对话框大小
 	LawnDialog::Resize(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
 
+	// 创建关闭按钮
 	mCloseButton = new GameButton(AlmanacDialog::ALMANAC_BUTTON_CLOSE);
 	mCloseButton->SetLabel(_S("[CLOSE_BUTTON]"));
 	mCloseButton->mButtonImage = Sexy::IMAGE_ALMANAC_CLOSEBUTTON;
@@ -63,6 +72,7 @@ AlmanacDialog::AlmanacDialog(LawnApp* theApp) : LawnDialog(theApp, DIALOG_ALMANA
 	mCloseButton->mTextOffsetX = -8;
 	mCloseButton->mTextOffsetY = 1;
 
+	// 创建索引按钮
 	mIndexButton = new GameButton(AlmanacDialog::ALMANAC_BUTTON_INDEX);
 	mIndexButton->SetLabel(_S("[ALMANAC_INDEX]"));
 	mIndexButton->mButtonImage = Sexy::IMAGE_ALMANAC_INDEXBUTTON;
@@ -76,6 +86,7 @@ AlmanacDialog::AlmanacDialog(LawnApp* theApp) : LawnDialog(theApp, DIALOG_ALMANA
 	mIndexButton->mTextOffsetX = 8;
 	mIndexButton->mTextOffsetY = 1;
 
+	// 创建植物按钮
 	mPlantButton = new GameButton(AlmanacDialog::ALMANAC_BUTTON_PLANT);
 	mPlantButton->SetLabel(_S("[VIEW_PLANTS]"));
 	mPlantButton->mButtonImage = Sexy::IMAGE_SEEDCHOOSER_BUTTON;
@@ -90,12 +101,14 @@ AlmanacDialog::AlmanacDialog(LawnApp* theApp) : LawnDialog(theApp, DIALOG_ALMANA
 	mPlantButton->mTextOffsetY = -1;
 	mPlantButton->mParentWidget = this;
 
+	// 创建僵尸按钮
 	mZombieButton = new GameButton(AlmanacDialog::ALMANAC_BUTTON_ZOMBIE);
 	mZombieButton->SetLabel(_S("[VIEW_ZOMBIES]"));
 	mZombieButton->Resize(487, 345, 210, 48);
 	mZombieButton->mDrawStoneButton = true;
 	mZombieButton->mParentWidget = this;
 
+	// 创建植物列表滚动条
 	mPlantSlider = new Sexy::Slider(IMAGE_OPTIONS_SLIDERSLOT_PLANT, IMAGE_OPTIONS_SLIDERKNOB_PLANT, 0, this);
 	mPlantSlider->SetValue(max(0.0, min(mMaxScrollPosition, mScrollPosition)));
 	mPlantSlider->mHorizontal = false;
@@ -103,6 +116,7 @@ AlmanacDialog::AlmanacDialog(LawnApp* theApp) : LawnDialog(theApp, DIALOG_ALMANA
 	mPlantSlider->mThumbOffsetX = -5;
 	mPlantSlider->mVisible = false;
 
+	// 创建僵尸列表滚动条
 	mZombieSlider = new Sexy::Slider(IMAGE_CHALLENGE_SLIDERSLOT, IMAGE_OPTIONS_SLIDERKNOB2, 0, this);
 	mZombieSlider->SetValue(max(0.0, min(mMaxScrollPosition, mScrollPosition)));
 	mZombieSlider->mHorizontal = false;
@@ -110,36 +124,49 @@ AlmanacDialog::AlmanacDialog(LawnApp* theApp) : LawnDialog(theApp, DIALOG_ALMANA
 	mZombieSlider->mThumbOffsetX = -1;
 	mZombieSlider->mVisible = false;
 
+	// 设置初始页面
 	SetPage(ALMANAC_PAGE_INDEX);
+	
+	// 播放背景音乐
 	if (!mApp->mBoard || !mApp->mBoard->mPaused)
 		mApp->mMusic->MakeSureMusicIsPlaying(MUSIC_TUNE_CHOOSE_YOUR_SEEDS);
 }
 
 AlmanacDialog::~AlmanacDialog()
 {
+	// 释放按钮资源
 	if (mCloseButton)	delete mCloseButton;
 	if (mIndexButton)	delete mIndexButton;
 	if (mPlantButton)	delete mPlantButton;
 	if (mZombieButton)	delete mZombieButton;
+	
+	// 释放滚动条资源
 	delete mPlantSlider;
 	delete mZombieSlider;
+	
+	// 清理对象
 	ClearObjects();
 }
 
 void AlmanacDialog::ClearObjects()
 {
+	// 清理植物对象
 	if (mPlant)
 	{
 		mPlant->Die();
 		delete mPlant;
 		mPlant = nullptr;
 	}
+	
+	// 清理僵尸对象
 	if (mZombie)
 	{
 		mZombie->DieNoLoot();
 		delete mZombie;
 		mZombie = nullptr;
 	}
+	
+	// 清理僵尸性能测试数组
 	for (Zombie* &aZombie : mZombiePerfTest)
 	{
 		if (aZombie)
@@ -338,131 +365,182 @@ void AlmanacDialog::DrawIndex(Graphics* g)
 
 void AlmanacDialog::DrawPlants(Graphics* g)
 {
+	// 绘制背景图片
 	g->DrawImage(Sexy::IMAGE_ALMANAC_PLANTBACK, 0, 0);
+	// 绘制页面标题
 	TodDrawString(g, _S("[SUBURBAN_ALMANAC_PLANTS]"), BOARD_WIDTH / 2, 48, Sexy::FONT_HOUSEOFTERROR20, Color(213, 159, 43), DS_ALIGN_CENTER);
+	
+	// 获取当前鼠标悬停的植物类型
 	SeedType aSeedMouseOn = SeedHitTest(mLastMouseX, mLastMouseY);
+	
+	// 遍历所有植物种子并绘制
 	for (SeedType aSeedType = SeedType::SEED_PEASHOOTER; aSeedType < NUM_SEEDS_IN_CHOOSER; aSeedType = (SeedType)(aSeedType + 1))
 	{
-		int aPosX, aPosY;
-		GetSeedPosition(aSeedType, aPosX, aPosY);
-		PlantDefinition& aPlantDef = GetPlantDefinition(aSeedType);
+		int aPosX, aPosY; // 植物图标的绘制位置
+		GetSeedPosition(aSeedType, aPosX, aPosY); // 获取植物图标的绘制位置
+		PlantDefinition& aPlantDef = GetPlantDefinition(aSeedType); // 获取植物定义
+		
+		// 检查植物是否已解锁
 		if (!mApp->SeedTypeAvailable(aSeedType))
 		{
+			// 如果植物未解锁且不是模仿者，则绘制灰色占位图
 			if (aSeedType != SeedType::SEED_IMITATER){
-				g->SetClipRect(cSeedClipRect);
+				g->SetClipRect(cSeedClipRect); // 设置裁剪区域，防止绘制出界
 				g->DrawImage(Sexy::IMAGE_ALMANAC_PLANTBLANK, aPosX, aPosY);
 			}
-			g->ClearClipRect();
+			g->ClearClipRect(); // 清除裁剪区域
 		}
-		else {
+		else // 如果植物已解锁
+		{
+			// 特殊处理模仿者植物的绘制
 			if (aSeedType == SeedType::SEED_IMITATER)
 			{
-				g->ClearClipRect();
+				g->ClearClipRect(); // 清除裁剪区域，因为模仿者图标较大
+				// 如果鼠标悬停在模仿者上，则额外绘制高亮效果（原代码此处绘制两遍，可能是为了加深效果或失误）
 				if (aSeedType == aSeedMouseOn)
 					g->DrawImage(Sexy::IMAGE_ALMANAC_IMITATER, aPosX, aPosY);
 				g->DrawImage(Sexy::IMAGE_ALMANAC_IMITATER, aPosX, aPosY);
 			}
+			// 绘制普通已解锁植物
 			else
 			{
-				g->SetClipRect(cSeedClipRect);
+				g->SetClipRect(cSeedClipRect); // 设置裁剪区域
+				// 绘制植物卡片
 				DrawSeedPacket(g, aPosX, aPosY, aSeedType, SeedType::SEED_NONE, 0, 255, true, false);
+				// 如果鼠标悬停在当前植物上，则绘制高亮边框
 				if (aSeedType == aSeedMouseOn)
 					g->DrawImage(Sexy::IMAGE_SEEDPACKETFLASH, aPosX, aPosY);
 			}
 		}
 	}
-	g->ClearClipRect();
+	g->ClearClipRect(); // 清除裁剪区域
+	
+	// 根据当前选中的植物类型，绘制不同的背景地面
 	if (mSelectedSeed == SeedType::SEED_LILYPAD || mSelectedSeed == SeedType::SEED_TANGLEKELP || 
 		mSelectedSeed == SeedType::SEED_CATTAIL || mSelectedSeed == SeedType::SEED_SEASHROOM)
 	{
-		bool aNight = mSelectedSeed == SeedType::SEED_SEASHROOM;
+		// 水生植物的背景 (白天水池或夜晚水池)
+		bool aNight = mSelectedSeed == SeedType::SEED_SEASHROOM; // 判断是否为夜晚环境的海蘑菇
 		g->DrawImage(aNight ? Sexy::IMAGE_ALMANAC_GROUNDNIGHTPOOL : Sexy::IMAGE_ALMANAC_GROUNDPOOL, 521, 107);
 
+		// 如果开启了3D加速，则绘制水池的动态效果
 		if (mApp->Is3dAccel())
 		{
-			g->SetClipRect(475, 0, 397, 500);
-			g->mTransY -= 145;
-			mApp->mPoolEffect->PoolEffectDraw(g, aNight);
-			g->mTransY += 145;
-			g->ClearClipRect();
+			g->SetClipRect(475, 0, 397, 500); // 设置水池效果的裁剪区域
+			g->mTransY -= 145; // 调整绘制的Y轴偏移，以匹配水池位置
+			mApp->mPoolEffect->PoolEffectDraw(g, aNight); // 绘制水池效果
+			g->mTransY += 145; // 恢复Y轴偏移
+			g->ClearClipRect(); // 清除裁剪区域
 		}
 	}
 	else
 	{
+		// 陆生植物的背景 (夜晚草地、屋顶或白天草地)
 		g->DrawImage(
-			Plant::IsNocturnal(mSelectedSeed) || mSelectedSeed == SeedType::SEED_GRAVEBUSTER || mSelectedSeed == SeedType::SEED_PLANTERN ? Sexy::IMAGE_ALMANAC_GROUNDNIGHT :
-			mSelectedSeed == SeedType::SEED_FLOWERPOT ? Sexy::IMAGE_ALMANAC_GROUNDROOF : Sexy::IMAGE_ALMANAC_GROUNDDAY,
+			Plant::IsNocturnal(mSelectedSeed) || mSelectedSeed == SeedType::SEED_GRAVEBUSTER || mSelectedSeed == SeedType::SEED_PLANTERN ? Sexy::IMAGE_ALMANAC_GROUNDNIGHT : // 夜晚植物或墓碑吞噬者、灯笼草
+			mSelectedSeed == SeedType::SEED_FLOWERPOT ? Sexy::IMAGE_ALMANAC_GROUNDROOF : // 花盆植物 (屋顶场景)
+			Sexy::IMAGE_ALMANAC_GROUNDDAY, // 其他白天陆生植物
 			521, 107
 		);
 	}
 	
+	// 绘制当前选中的植物实体模型
 	if (mPlant)
 	{
-		Graphics aPlantGraphics = Graphics(*g);
-		mPlant->BeginDraw(&aPlantGraphics);
-		mPlant->Draw(&aPlantGraphics);
+		Graphics aPlantGraphics = Graphics(*g); // 创建新的Graphics对象进行绘制，避免互相影响
+		mPlant->BeginDraw(&aPlantGraphics); // 开始绘制植物
+		mPlant->Draw(&aPlantGraphics);     // 执行植物自身的绘制逻辑
 	}
 
+	// 绘制植物信息卡片的背景图
 	g->DrawImage(Sexy::IMAGE_ALMANAC_PLANTCARD, 459, 86);
-	PlantDefinition& aPlantDef = GetPlantDefinition(mSelectedSeed);
-	SexyString aName = Plant::GetNameString(mSelectedSeed, SEED_NONE);
-	//TodDrawString(g, to_string((int)mIncrement), 32, 32, Sexy::FONT_DWARVENTODCRAFT18YELLOW, Color::White, DS_ALIGN_CENTER);
+	PlantDefinition& aPlantDef = GetPlantDefinition(mSelectedSeed); // 获取当前选中植物的定义
+	SexyString aName = Plant::GetNameString(mSelectedSeed, SEED_NONE); // 获取植物的名称字符串
+	// 绘制植物名称
 	TodDrawString(g, aName, 617, 288, Sexy::FONT_DWARVENTODCRAFT18YELLOW, Color::White, DS_ALIGN_CENTER);
-	Font* descriptionFont = Sexy::FONT_BRIANNETOD12;
-	Color descriptionColor = Color(40, 50, 90);
-	mDescriptionRect = Rect(485, 309, 258, 210);
-	DrawStringJustification descriptionJustification = DS_ALIGN_LEFT;
+	
+	// 准备绘制植物描述文本
+	Font* descriptionFont = Sexy::FONT_BRIANNETOD12; // 描述文本的字体
+	Color descriptionColor = Color(40, 50, 90);      // 描述文本的颜色
+	mDescriptionRect = Rect(485, 309, 258, 210);    // 描述文本区域的初始矩形
+	DrawStringJustification descriptionJustification = DS_ALIGN_LEFT; // 描述文本的对齐方式
+	
+	// 绘制植物描述的标题部分 (例如 "COST:", "RECHARGE:")
 	SexyString descriptionHeader = TranslateAndSanitize(StrFormat(_S("[%s_DESCRIPTION_HEADER]"), aPlantDef.mPlantName));
 	TodDrawStringWrapped(g, descriptionHeader, mDescriptionRect, descriptionFont, descriptionColor, descriptionJustification);
+	// 计算标题占用的高度，并调整后续描述内容绘制的起始Y坐标和高度
 	int textSpacing = TodDrawStringWrappedHelper(g, descriptionHeader, mDescriptionRect, descriptionFont, descriptionColor, descriptionJustification, false);
 	mDescriptionRect.mY += textSpacing;
 	mDescriptionRect.mHeight -= textSpacing;
+	
+	// 绘制植物描述的主体内容
 	SexyString description = TranslateAndSanitize(StrFormat(_S("[%s_DESCRIPTION]"), aPlantDef.mPlantName));
+	// 预计算描述内容所需的总高度
 	textSpacing = TodDrawStringWrappedHelper(g, description, mDescriptionRect, descriptionFont, descriptionColor, descriptionJustification, false);
-	int rectHeight;
+	int rectHeight; // 实际用于绘制描述文本的矩形高度
+
+	// 如果描述内容超出了预设的矩形高度，则需要显示滚动条
 	if (mDescriptionRect.mHeight < textSpacing)
 	{
+		// 检查鼠标是否在描述区域内，用于后续的鼠标滚轮事件处理
 		mIsOverDescription = mDescriptionRect.Contains(mLastMouseX, mLastMouseY);
-		mDescriptionLineSpacing = descriptionFont->GetLineSpacing();
-		int barWidth = 8;
+		mDescriptionLineSpacing = descriptionFont->GetLineSpacing(); // 获取字体行高，用于滚动计算
+		int barWidth = 8; // 滚动条宽度
+		// 计算滚动条的X坐标 (位于描述区域右侧)
 		int barX = mDescriptionRect.mX + mDescriptionRect.mWidth - (barWidth / 2);
-		mDescriptionRect.mWidth -= barWidth;
+		mDescriptionRect.mWidth -= barWidth; // 描述文本区域宽度减去滚动条宽度
+		// 重新计算在该宽度下描述内容所需的高度
 		textSpacing = TodDrawStringWrappedHelper(g, description, mDescriptionRect, descriptionFont, descriptionColor, descriptionJustification, false);
-		g->SetColor(Color(143, 67, 27, 75));
+		
+		// 绘制滚动条的背景凹槽
+		g->SetColor(Color(143, 67, 27, 75)); // 设置半透明颜色
 		g->FillRect(Rect(barX, mDescriptionRect.mY, barWidth, mDescriptionRect.mHeight));
-		mDescriptionMaxScroll = textSpacing - mDescriptionRect.mHeight;
-		g->SetColor(Color(143, 67, 27));
+		mDescriptionMaxScroll = textSpacing - mDescriptionRect.mHeight; // 计算最大滚动距离
+		
+		// 绘制滚动条的滑块
+		g->SetColor(Color(143, 67, 27)); // 设置滑块颜色
+		// 计算滑块的高度，最小不低于ALMANAC_DESCRIPTION_MIN_HEIGHT
 		int barHeight = mDescriptionRect.mHeight - mDescriptionMaxScroll;
-		float posY = mDescriptionScroll;
-		mDescriptionOverfill = barHeight < ALMANAC_DESCRIPTION_MIN_HEIGHT;
+		float posY = mDescriptionScroll; // 滑块的Y坐标，由当前滚动位置决定
+		mDescriptionOverfill = barHeight < ALMANAC_DESCRIPTION_MIN_HEIGHT; // 判断滑块是否过小
 		if (mDescriptionOverfill)
 		{
-			barHeight = ALMANAC_DESCRIPTION_MIN_HEIGHT;
+			barHeight = ALMANAC_DESCRIPTION_MIN_HEIGHT; // 设置最小滑块高度
+			// 根据滚动比例重新计算滑块Y坐标
 			posY = (mDescriptionScroll / mDescriptionMaxScroll) * (mDescriptionRect.mHeight - barHeight);
 		}
+		// 定义滚动条滑块的矩形区域，用于后续的点击和拖动检测
 		mDescriptionSliderRect = Rect(barX, mDescriptionRect.mY + posY, barWidth, barHeight);
-		g->FillRect(mDescriptionSliderRect);
-		rectHeight = textSpacing;
+		g->FillRect(mDescriptionSliderRect); // 绘制滑块
+		rectHeight = textSpacing; // 描述文本绘制区域的高度等于文本实际高度
 	}
-	else
+	else // 如果描述内容未超出预设矩形高度，则不需要滚动条
 	{
 		mIsOverDescription = false;
 		mDescriptionLineSpacing = 0;
 		mDescriptionScroll = 0;
 		mDescriptionMaxScroll = 0;
-		rectHeight = mDescriptionRect.mHeight;
+		rectHeight = mDescriptionRect.mHeight; // 描述文本绘制区域的高度等于预设区域高度
 	}
-	g->SetClipRect(mDescriptionRect);
+
+	// 绘制实际的描述文本内容，并根据滚动位置进行裁剪
+	g->SetClipRect(mDescriptionRect); // 设置裁剪区域，只显示在描述框内的文本
+	// 绘制换行文本，Y坐标根据当前滚动位置(mDescriptionScroll)调整
 	TodDrawStringWrapped(g, description, Rect(mDescriptionRect.mX, mDescriptionRect.mY - mDescriptionScroll, mDescriptionRect.mWidth, rectHeight), descriptionFont, descriptionColor, descriptionJustification);
-	g->ClearClipRect();
+	g->ClearClipRect(); // 清除裁剪区域
+	
+	// 绘制植物的附加信息 (花费、冷却时间等)，模仿者没有这些信息
 	if (mSelectedSeed != SeedType::SEED_IMITATER)
 	{
+		// 绘制植物的阳光花费
 		SexyString aCostStr = TodReplaceString(StrFormat(_S("{KEYWORD}{COST}:{STAT} %d"), aPlantDef.mSeedCost), _S("{COST}"), _S("[COST]"));
 		TodDrawStringWrapped(g, aCostStr, Rect(485, 520, 134, 50), Sexy::FONT_BRIANNETOD12, Color::White, DS_ALIGN_LEFT);
 
+		// 绘制植物的冷却时间
 		SexyString aRechargeStr = TodReplaceString(
 			_S("{KEYWORD}{WAIT_TIME}:{STAT} {WAIT_TIME_LENGTH}"), 
 			_S("{WAIT_TIME_LENGTH}"),
+			// 根据冷却时间数值选择对应的描述文本 (短、长、非常长)
 			aPlantDef.mRefreshTime == 750 ? _S("[WAIT_TIME_SHORT]") : aPlantDef.mRefreshTime == 3000 ? _S("[WAIT_TIME_LONG]") : _S("[WAIT_TIME_VERY_LONG]")
 		);
 		aRechargeStr = TodReplaceString(aRechargeStr, _S("{WAIT_TIME}"), _S("[WAIT_TIME]"));
@@ -677,44 +755,65 @@ void AlmanacDialog::Draw(Graphics* g)
 	mZombieButton->Draw(g);
 }
 
+// 获取植物在图鉴列表中的绘制位置
+// @param theSeedType 要获取位置的植物类型
+// @param x 用于接收计算出的X坐标 (引用传递)
+// @param y 用于接收计算出的Y坐标 (引用传递)
 void AlmanacDialog::GetSeedPosition(SeedType theSeedType, int& x, int& y)
 {
 	SeedType aPlantIndex = theSeedType;
+	// 特殊处理：如果植物类型在模仿者之后，索引需要减1，因为模仿者在图鉴中占位特殊
 	if (aPlantIndex > SeedType::SEED_IMITATER)
 		aPlantIndex = (SeedType)(aPlantIndex - 1);
 
+	// 模仿者有固定的特殊绘制位置
 	if (aPlantIndex == SeedType::SEED_IMITATER)
 		x = 20, y = 23;
-	else
+	else // 计算其他普通植物的绘制位置
 	{
-		int aFinalSeedType = aPlantIndex;
-		int width = SEED_PACKET_WIDTH + 2;
-		int offsetY = 14;
-		x = aFinalSeedType % seedPacketRows * width + (width / 2);
-		y = aFinalSeedType / seedPacketRows * seedPacketHeight + (seedPacketHeight + offsetY) - mScrollPosition;
+		int aFinalSeedType = aPlantIndex; // 调整后的植物索引
+		int width = SEED_PACKET_WIDTH + 2; // 每个植物图标的宽度 (包括间距)
+		int offsetY = 14; // Y轴方向的额外偏移
+		// 根据植物索引、每行显示的植物数量、图标宽度和高度，以及当前的滚动位置计算最终坐标
+		x = aFinalSeedType % seedPacketRows * width + (width / 2); // X坐标 = (索引 % 每行数量) * 图标宽度 + 图标宽度的一半 (用于居中)
+		y = aFinalSeedType / seedPacketRows * seedPacketHeight + (seedPacketHeight + offsetY) - mScrollPosition; // Y坐标 = (索引 / 每行数量) * 图标高度 + (图标高度 + 偏移) - 滚动位置
 	}
 }
 
+// 检测鼠标点击位置是否命中了某个植物图标
+// @param x 鼠标的X坐标
+// @param y 鼠标的Y坐标
+// @return 如果命中则返回对应的植物类型 (SeedType)，否则返回 SEED_NONE
 SeedType AlmanacDialog::SeedHitTest(int x, int y)
 {
+	// 仅当鼠标可见且当前页面为植物页面时才进行检测
 	if (mMouseVisible && mOpenPage == AlmanacPage::ALMANAC_PAGE_PLANTS)
 	{
+		// 遍历所有在图鉴中可能出现的植物类型
 		for (SeedType aSeedType = SeedType::SEED_PEASHOOTER; aSeedType < NUM_SEEDS_IN_CHOOSER; aSeedType = (SeedType)(aSeedType + 1))
 		{
-			PlantDefinition& aPlantDef = GetPlantDefinition(aSeedType);
+			PlantDefinition& aPlantDef = GetPlantDefinition(aSeedType); // 获取植物定义
+			// 检查该植物类型是否已解锁 (即玩家是否拥有)
 			if (mApp->SeedTypeAvailable(aSeedType))
 			{
-				int aSeedX, aSeedY;
-				GetSeedPosition(aSeedType, aSeedX, aSeedY);
-				Rect aSeedRect = aSeedType != SeedType::SEED_IMITATER ? Rect(aSeedX, aSeedY, SEED_PACKET_WIDTH, SEED_PACKET_HEIGHT) : Rect(aSeedX, aSeedY, IMAGE_ALMANAC_IMITATER->mWidth, IMAGE_ALMANAC_IMITATER->mHeight);
+				int aSeedX, aSeedY; // 植物图标的绘制位置
+				GetSeedPosition(aSeedType, aSeedX, aSeedY); // 获取植物图标的绘制位置
+				// 定义植物图标的矩形点击区域
+				// 模仿者的图标尺寸与其他植物不同，需要单独处理
+				Rect aSeedRect = aSeedType != SeedType::SEED_IMITATER ? 
+					Rect(aSeedX, aSeedY, SEED_PACKET_WIDTH, SEED_PACKET_HEIGHT) : // 普通植物的点击区域
+					Rect(aSeedX, aSeedY, IMAGE_ALMANAC_IMITATER->mWidth, IMAGE_ALMANAC_IMITATER->mHeight); // 模仿者的点击区域
+				
+				// 判断鼠标点击位置是否在植物图标的矩形区域内
+				// 同时，对于非模仿者植物，还需要检查点击是否在列表的可见裁剪区域 (cSeedClipRect) 内
 				if ((cSeedClipRect.Contains(x, y) || aSeedType == SeedType::SEED_IMITATER) && aSeedRect.Contains(x, y))
 				{
-					return aSeedType;
+					return aSeedType; // 返回命中的植物类型
 				}
 			}
 		}
 	}
-	return SeedType::SEED_NONE;
+	return SeedType::SEED_NONE; // 如果没有命中任何植物，则返回 SEED_NONE
 }
 
 int AlmanacDialog::ZombieHasSilhouette(ZombieType theZombieType)

@@ -31,27 +31,27 @@ namespace Sexy
 
 	// DelayLoad_Almanac Resources
 	bool ExtractDelayLoad_AlmanacResources(ResourceManager *theMgr);
-	extern Image* IMAGE_ALMANAC_CLOSEBUTTON;
-	extern Image* IMAGE_ALMANAC_CLOSEBUTTONHIGHLIGHT;
-	extern Image* IMAGE_ALMANAC_GROUNDDAY;
-	extern Image* IMAGE_ALMANAC_GROUNDICE;
-	extern Image* IMAGE_ALMANAC_GROUNDNIGHT;
-	extern Image* IMAGE_ALMANAC_GROUNDNIGHTPOOL;
-	extern Image* IMAGE_ALMANAC_GROUNDPOOL;
-	extern Image* IMAGE_ALMANAC_GROUNDROOF;
-	extern Image* IMAGE_ALMANAC_INDEXBACK;
-	extern Image* IMAGE_ALMANAC_INDEXBUTTON;
-	extern Image* IMAGE_ALMANAC_INDEXBUTTONHIGHLIGHT;
-	extern Image* IMAGE_ALMANAC_INDEXBUTTONHIGHLIGHT_DISABLE;
-	extern Image* IMAGE_ALMANAC_INDEXBUTTON_DISABLE;
-	extern Image* IMAGE_ALMANAC_PLANTBACK;
-	extern Image* IMAGE_ALMANAC_PLANTBLANK;
-	extern Image* IMAGE_ALMANAC_PLANTCARD;
-	extern Image* IMAGE_ALMANAC_ZOMBIEBACK;
-	extern Image* IMAGE_ALMANAC_ZOMBIEBLANK;
-	extern Image* IMAGE_ALMANAC_ZOMBIECARD;
-	extern Image* IMAGE_ALMANAC_ZOMBIEWINDOW2;
-	extern Image* IMAGE_ALMANAC_ZOMBIEWINDOW;
+	extern Image* IMAGE_ALMANAC_CLOSEBUTTON;                      // 图鉴关闭按钮
+	extern Image* IMAGE_ALMANAC_CLOSEBUTTONHIGHLIGHT;            // 图鉴关闭按钮高亮
+	extern Image* IMAGE_ALMANAC_GROUNDDAY;                       // 图鉴白天地面背景
+	extern Image* IMAGE_ALMANAC_GROUNDICE;                       // 图鉴冰面地面背景
+	extern Image* IMAGE_ALMANAC_GROUNDNIGHT;                     // 图鉴夜晚地面背景
+	extern Image* IMAGE_ALMANAC_GROUNDNIGHTPOOL;                 // 图鉴夜晚泳池地面背景
+	extern Image* IMAGE_ALMANAC_GROUNDPOOL;                      // 图鉴泳池地面背景
+	extern Image* IMAGE_ALMANAC_GROUNDROOF;                      // 图鉴屋顶地面背景
+	extern Image* IMAGE_ALMANAC_INDEXBACK;                       // 图鉴索引页背景
+	extern Image* IMAGE_ALMANAC_INDEXBUTTON;                     // 图鉴索引按钮
+	extern Image* IMAGE_ALMANAC_INDEXBUTTONHIGHLIGHT;           // 图鉴索引按钮高亮
+	extern Image* IMAGE_ALMANAC_INDEXBUTTONHIGHLIGHT_DISABLE;   // 图鉴索引按钮禁用高亮
+	extern Image* IMAGE_ALMANAC_INDEXBUTTON_DISABLE;            // 图鉴索引按钮禁用
+	extern Image* IMAGE_ALMANAC_PLANTBACK;                      // 图鉴植物页背景
+	extern Image* IMAGE_ALMANAC_PLANTBLANK;                     // 图鉴植物未解锁占位图
+	extern Image* IMAGE_ALMANAC_PLANTCARD;                      // 图鉴植物信息卡片
+	extern Image* IMAGE_ALMANAC_ZOMBIEBACK;                     // 图鉴僵尸页背景
+	extern Image* IMAGE_ALMANAC_ZOMBIEBLANK;                    // 图鉴僵尸未解锁占位图
+	extern Image* IMAGE_ALMANAC_ZOMBIECARD;                     // 图鉴僵尸信息卡片
+	extern Image* IMAGE_ALMANAC_ZOMBIEWINDOW2;                  // 图鉴僵尸展示窗口2
+	extern Image* IMAGE_ALMANAC_ZOMBIEWINDOW;                   // 图鉴僵尸展示窗口
 
 	// DelayLoad_AwardScreen Resources
 	bool ExtractDelayLoad_AwardScreenResources(ResourceManager *theMgr);
@@ -151,30 +151,30 @@ namespace Sexy
 
 	// DelayLoad_Store Resources
 	bool ExtractDelayLoad_StoreResources(ResourceManager *theMgr);
-	extern Image* IMAGE_STORE_AQUARIUMGARDENICON;
-	extern Image* IMAGE_STORE_BACKGROUND;
-	extern Image* IMAGE_STORE_BACKGROUNDNIGHT;
-	extern Image* IMAGE_STORE_CAR;
-	extern Image* IMAGE_STORE_CARCLOSED;
-	extern Image* IMAGE_STORE_CARCLOSED_NIGHT;
-	extern Image* IMAGE_STORE_CAR_NIGHT;
-	extern Image* IMAGE_STORE_FIRSTAIDWALLNUTICON;
-	extern Image* IMAGE_STORE_HATCHBACKOPEN;
-	extern Image* IMAGE_STORE_MAINMENUBUTTON;
-	extern Image* IMAGE_STORE_MAINMENUBUTTONDOWN;
-	extern Image* IMAGE_STORE_MAINMENUBUTTONHIGHLIGHT;
-	extern Image* IMAGE_STORE_MUSHROOMGARDENICON;
-	extern Image* IMAGE_STORE_NEXTBUTTON;
-	extern Image* IMAGE_STORE_NEXTBUTTONDISABLED;
-	extern Image* IMAGE_STORE_NEXTBUTTONHIGHLIGHT;
-	extern Image* IMAGE_STORE_PACKETUPGRADE;
-	extern Image* IMAGE_STORE_PREVBUTTON;
-	extern Image* IMAGE_STORE_PREVBUTTONDISABLED;
-	extern Image* IMAGE_STORE_PREVBUTTONHIGHLIGHT;
-	extern Image* IMAGE_STORE_PRICETAG;
-	extern Image* IMAGE_STORE_PVZICON;
-	extern Image* IMAGE_STORE_SIGN;
-	extern Image* IMAGE_STORE_TREEOFWISDOMICON;
+	extern Image* IMAGE_STORE_AQUARIUMGARDENICON;               // 商店水族馆花园图标
+	extern Image* IMAGE_STORE_BACKGROUND;                       // 商店白天背景
+	extern Image* IMAGE_STORE_BACKGROUNDNIGHT;                  // 商店夜晚背景
+	extern Image* IMAGE_STORE_CAR;                             // 商店汽车(开门)
+	extern Image* IMAGE_STORE_CARCLOSED;                       // 商店汽车(关门)
+	extern Image* IMAGE_STORE_CARCLOSED_NIGHT;                 // 商店汽车夜晚(关门)
+	extern Image* IMAGE_STORE_CAR_NIGHT;                       // 商店汽车夜晚(开门)
+	extern Image* IMAGE_STORE_FIRSTAIDWALLNUTICON;             // 商店坚果急救包图标
+	extern Image* IMAGE_STORE_HATCHBACKOPEN;                   // 商店掀背车开门
+	extern Image* IMAGE_STORE_MAINMENUBUTTON;                  // 商店主菜单按钮
+	extern Image* IMAGE_STORE_MAINMENUBUTTONDOWN;              // 商店主菜单按钮按下
+	extern Image* IMAGE_STORE_MAINMENUBUTTONHIGHLIGHT;         // 商店主菜单按钮高亮
+	extern Image* IMAGE_STORE_MUSHROOMGARDENICON;              // 商店蘑菇园图标
+	extern Image* IMAGE_STORE_NEXTBUTTON;                      // 商店下一页按钮
+	extern Image* IMAGE_STORE_NEXTBUTTONDISABLED;              // 商店下一页按钮禁用
+	extern Image* IMAGE_STORE_NEXTBUTTONHIGHLIGHT;             // 商店下一页按钮高亮
+	extern Image* IMAGE_STORE_PACKETUPGRADE;                   // 商店种子包升级图标
+	extern Image* IMAGE_STORE_PREVBUTTON;                      // 商店上一页按钮
+	extern Image* IMAGE_STORE_PREVBUTTONDISABLED;              // 商店上一页按钮禁用
+	extern Image* IMAGE_STORE_PREVBUTTONHIGHLIGHT;             // 商店上一页按钮高亮
+	extern Image* IMAGE_STORE_PRICETAG;                        // 商店价格标签
+	extern Image* IMAGE_STORE_PVZICON;                         // 商店PVZ图标
+	extern Image* IMAGE_STORE_SIGN;                            // 商店招牌
+	extern Image* IMAGE_STORE_TREEOFWISDOMICON;                // 商店智慧树图标
 
 	// DelayLoad_TreeOfWisdom Resources
 	bool ExtractDelayLoad_TreeOfWisdomResources(ResourceManager *theMgr);
